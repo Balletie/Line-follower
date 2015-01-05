@@ -14,6 +14,8 @@
 #define EN2  25
 #define FWD2 2
 
+#define MAX_VEL 255
+
 ros::NodeHandle_<Bluetooth> nh;
 
 void motorCb( const std_msgs::Empty& toggle_msg){
@@ -26,13 +28,33 @@ void speedCb(const std_msgs::UInt8& speed_msg){
   analogWrite(FWD2, (int)speed_msg.data);
 }
 
-/*
 void twistCb(const geometry_msgs::Twist& twist_msg){
-  twist_msgs.linear
+  float lin_vel = twist_msg.linear.x;
+  float ang_vel = twist_msg.angular.z;
+  int left_speed = 0, right_speed = 0;
+  left_speed = lin_vel * MAX_VEL;
+  right_speed = lin_vel * MAX_VEL;
+  left_speed += ang_vel * MAX_VEL;
+  right_speed += -ang_vel * MAX_VEL;
+
+  if (left_speed < 0) {
+    digitalWrite(FWD1, LOW);
+    analogWrite(REV1, left_speed);
+  } else {
+    digitalWrite(REV1, LOW);
+    analogWrite(FWD1, left_speed);
+  }
+  if (right_speed < 0) {
+    digitalWrite(FWD2, LOW);
+    analogWrite(REV2, right_speed);
+  } else {
+    digitalWrite(REV2, LOW);
+    analogWrite(FWD2, right_speed);
+  }
 }
 
-ros::Subscriber<geometry_msgs::Twist> 
-*/
+ros::Subscriber<geometry_msgs::Twist> twist("cmd_vel", &twistCb);
+
 ros::Subscriber<std_msgs::Empty> sub("toggle_motor", &motorCb);
 ros::Subscriber<std_msgs::UInt8> spd("speed_control", &speedCb);
 
@@ -51,6 +73,7 @@ void setup()
   nh.initNode();
   nh.subscribe(sub);
   nh.subscribe(spd);
+  nh.subscribe(twist);
 }
 
 void loop()
