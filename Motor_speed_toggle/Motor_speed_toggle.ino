@@ -1,11 +1,10 @@
-/* 
- * rosserial Subscriber Example
- * Blinks an LED on callback
- */
+#include "bluetooth.h"
 
 #include <ros.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/UInt8.h>
+#include <geometry_msgs/Twist.h>
+#include <geometry_msgs/Vector3.h>
 
 #define REV1 7
 #define EN1  24
@@ -15,7 +14,7 @@
 #define EN2  25
 #define FWD2 2
 
-ros::NodeHandle  nh;
+ros::NodeHandle_<Bluetooth> nh;
 
 void motorCb( const std_msgs::Empty& toggle_msg){
   digitalWrite(FWD1, HIGH-digitalRead(FWD1));
@@ -26,6 +25,14 @@ void speedCb(const std_msgs::UInt8& speed_msg){
   analogWrite(FWD1, (int)speed_msg.data);
   analogWrite(FWD2, (int)speed_msg.data);
 }
+
+/*
+void twistCb(const geometry_msgs::Twist& twist_msg){
+  twist_msgs.linear
+}
+
+ros::Subscriber<geometry_msgs::Twist> 
+*/
 ros::Subscriber<std_msgs::Empty> sub("toggle_motor", &motorCb);
 ros::Subscriber<std_msgs::UInt8> spd("speed_control", &speedCb);
 
