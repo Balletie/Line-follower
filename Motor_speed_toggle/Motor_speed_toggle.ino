@@ -7,32 +7,40 @@
 #include <std_msgs/Empty.h>
 #include <std_msgs/UInt8.h>
 
+#define REV1 7
+#define EN1  24
+#define FWD1 6
+
+#define REV2 3
+#define EN2  25
+#define FWD2 2
+
 ros::NodeHandle  nh;
 
 void motorCb( const std_msgs::Empty& toggle_msg){
-  digitalWrite(6, HIGH-digitalRead(6));
-  digitalWrite(2, HIGH-digitalRead(2));
+  digitalWrite(FWD1, HIGH-digitalRead(FWD1));
+  digitalWrite(FWD2, HIGH-digitalRead(FWD2));
 }
 
 void speedCb(const std_msgs::UInt8& speed_msg){
-  analogWrite(2, (int)speed_msg.data);
-  analogWrite(6, (int)speed_msg.data);
+  analogWrite(FWD1, (int)speed_msg.data);
+  analogWrite(FWD2, (int)speed_msg.data);
 }
 ros::Subscriber<std_msgs::Empty> sub("toggle_motor", &motorCb);
 ros::Subscriber<std_msgs::UInt8> spd("speed_control", &speedCb);
 
 void setup()
 { 
-  pinMode(24, OUTPUT);
-  pinMode(25, OUTPUT);
-  pinMode(3, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(2, OUTPUT);
-  pinMode(6, OUTPUT);
-  digitalWrite(24, HIGH);
-  digitalWrite(25, HIGH);
-  digitalWrite(3, LOW);
-  digitalWrite(7, LOW);
+  pinMode(EN1, OUTPUT);
+  pinMode(EN2, OUTPUT);
+  pinMode(REV1, OUTPUT);
+  pinMode(REV2, OUTPUT);
+  pinMode(FWD1, OUTPUT);
+  pinMode(FWD2, OUTPUT);
+  digitalWrite(EN1, HIGH);
+  digitalWrite(EN2, HIGH);
+  digitalWrite(REV1, LOW);
+  digitalWrite(REV2, LOW);
   nh.initNode();
   nh.subscribe(sub);
   nh.subscribe(spd);
