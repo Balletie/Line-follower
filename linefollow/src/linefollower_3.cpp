@@ -18,7 +18,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& img) {
     cv::Mat cv_img, color_edge_img;
     cv_img = cv_bridge::toCvShare(img, "bgr8")->image;
 
-    detectLines(cv_img, color_edge_img);
+    detectTrack(cv_img, color_edge_img);
 
     cv::imshow("Hello_World", color_edge_img);
     cv::waitKey(30);
