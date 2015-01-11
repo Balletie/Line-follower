@@ -13,6 +13,8 @@
 
 #include "linefollow/line_detect.h"
 
+#define WINDOW_NAME "Hello_World"
+
 void imageCallback(const sensor_msgs::ImageConstPtr& img) {
   try {
     cv::Mat cv_img, color_edge_img;
@@ -20,7 +22,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& img) {
 
     detectTrack(cv_img, color_edge_img);
 
-    cv::imshow("Hello_World", color_edge_img);
+    cv::imshow(WINDOW_NAME, color_edge_img);
     cv::waitKey(30);
   } catch (cv_bridge::Exception& e) {
     ROS_ERROR("Could not convert from '%s' to 'bgr8'.", img->encoding.c_str());
@@ -36,8 +38,8 @@ int main(int argc, char** argv) {
   image_transport::Subscriber sub = it.subscribe("camera/image", 1,
                                                  imageCallback, hints);
 
-  cv::namedWindow("Hello_World");
+  cv::namedWindow(WINDOW_NAME);
   cv::startWindowThread();
   ros::spin();
-  cv::destroyWindow("Hello_World");
+  cv::destroyWindow(WINDOW_NAME);
 }

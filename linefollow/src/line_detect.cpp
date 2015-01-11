@@ -15,7 +15,8 @@ void detectTrack(cv::InputArray image, cv::Mat& track_img) {
   cv::Mat grayscale;
   cv::cvtColor(image, grayscale, CV_BGR2GRAY);
   // TODO: Use a more sophisticated way of distinguishing the track.
-  cv::threshold(grayscale, track_img, THRESHOLD, MAXVAL, cv::THRESH_BINARY_INV);
+  cv::threshold(grayscale, track_img, -1, MAXVAL, cv::THRESH_BINARY_INV +
+                                                  cv::THRESH_OTSU);
 }
 
 void detectLines(cv::InputArray image, cv::Mat& color_edge_img) {
