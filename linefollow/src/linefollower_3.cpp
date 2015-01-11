@@ -14,6 +14,7 @@
 #include "linefollow/line_detect.h"
 
 #define WINDOW_NAME "Hello_World"
+#define SLIDER_NAME "Constants slider"
 
 void imageCallback(const sensor_msgs::ImageConstPtr& img) {
   try {
@@ -38,10 +39,11 @@ int main(int argc, char** argv) {
                                                  imageCallback, hints);
 
   cv::namedWindow(WINDOW_NAME);
-  cv::createTrackbar("Canny threshold:", WINDOW_NAME, &lowThreshold, 100);
-  cv::createTrackbar("Canny threshold:", WINDOW_NAME, &houghThreshold, 200);
-  cv::createTrackbar("Canny threshold:", WINDOW_NAME, &houghMinLineLength, 100);
-  cv::createTrackbar("Canny threshold:", WINDOW_NAME, &houghMaxLineGap, 100);
+  cv::namedWindow(SLIDER_NAME);
+  cv::createTrackbar("Canny low threshold:", SLIDER_NAME, &lowThreshold, 100);
+  cv::createTrackbar("Hough threshold:", SLIDER_NAME, &houghThreshold, 200);
+  cv::createTrackbar("Hough min. line:", SLIDER_NAME, &houghMinLineLength, 100);
+  cv::createTrackbar("Hough max. gap:", SLIDER_NAME, &houghMaxLineGap, 100);
   cv::startWindowThread();
   ros::spin();
   cv::destroyWindow(WINDOW_NAME);
