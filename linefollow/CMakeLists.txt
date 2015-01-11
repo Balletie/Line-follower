@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
+find_package(OpenCV REQUIRED)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -96,6 +98,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${opencv_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
@@ -104,16 +107,17 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-# add_executable(linefollow_node src/linefollow_node.cpp)
+add_executable(linefollow_node src/linefollower_3.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(linefollow_node linefollow_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(linefollow_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(linefollow_node
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS}
+)
 
 #############
 ## Install ##
