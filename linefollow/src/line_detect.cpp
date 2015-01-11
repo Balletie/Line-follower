@@ -8,8 +8,13 @@
 
 #include <linefollow/line_detect.h>
 #include <vector>
-#define THRESHOLD 127
+#define RATIO     3
 #define MAXVAL    255
+
+int lowThreshold = 50;
+int houghThreshold = 80;
+int houghMinLineLength = 30;
+int houghMaxLineGap = 10;
 
 void distinguishTrack(cv::InputArray image, cv::Mat& track_img) {
   cv::Mat grayscale;
@@ -22,11 +27,13 @@ void distinguishTrack(cv::InputArray image, cv::Mat& track_img) {
 
 void detectLines(cv::InputArray image, cv::Mat& color_edge_img) {
   cv::Mat edge_img;
-  cv::Canny(image, edge_img, 50, 200, 3);
+  cv::Canny(image, edge_img, lowThreshold, lowThreshold * RATIO, 3);
   cv::cvtColor(edge_img, color_edge_img, CV_GRAY2BGR);
 
   std::vector<cv::Vec4i> lines;
-  cv::HoughLinesP(edge_img, lines, 1, CV_PI/180, 80, 30, 10);
+  cv::HoughLinesP(edge_img, lines, 1, CV_PI/180, houghThreshold,
+                                                 houghMinLineLength,
+                                                 houghMaxLineGap);
   for(size_t i = 0; i < lines.size(); i++) {
     // Draw a colored line
     cv::line(color_edge_img, cv::Point(lines[i][0], lines[i][1]),

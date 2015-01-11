@@ -11,7 +11,12 @@
 
 #include <opencv2/opencv.hpp>
 
-void detectTrack(cv::InputArray, cv::Mat&);
+extern int lowThreshold;
+extern int houghThreshold;
+extern int houghMinLineLength;
+extern int houghMaxLineGap;
+
 void distinguishTrack(cv::InputArray, cv::Mat&);
+void detectLines(cv::InputArray, cv::Mat&);
 
 #endif /*_LINE_DETECT_H_*/

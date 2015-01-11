@@ -20,7 +20,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& img) {
     cv::Mat cv_img, color_edge_img;
     cv_img = cv_bridge::toCvShare(img, "bgr8")->image;
 
-    distinguishTrack(cv_img, color_edge_img);
+    detectLines(cv_img, color_edge_img);
 
     cv::imshow(WINDOW_NAME, color_edge_img);
   } catch (cv_bridge::Exception& e) {
@@ -38,6 +38,10 @@ int main(int argc, char** argv) {
                                                  imageCallback, hints);
 
   cv::namedWindow(WINDOW_NAME);
+  cv::createTrackbar("Canny threshold:", WINDOW_NAME, &lowThreshold, 100);
+  cv::createTrackbar("Canny threshold:", WINDOW_NAME, &houghThreshold, 200);
+  cv::createTrackbar("Canny threshold:", WINDOW_NAME, &houghMinLineLength, 100);
+  cv::createTrackbar("Canny threshold:", WINDOW_NAME, &houghMaxLineGap, 100);
   cv::startWindowThread();
   ros::spin();
   cv::destroyWindow(WINDOW_NAME);
