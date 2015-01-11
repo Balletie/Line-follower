@@ -12,6 +12,6 @@
 #include <opencv2/opencv.hpp>
 
 void detectTrack(cv::InputArray, cv::Mat&);
-void detectLines(cv::InputArray, cv::Mat&);
+void distinguishTrack(cv::InputArray, cv::Mat&);
 
 #endif /*_LINE_DETECT_H_*/

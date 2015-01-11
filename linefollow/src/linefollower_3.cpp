@@ -20,10 +20,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& img) {
     cv::Mat cv_img, color_edge_img;
     cv_img = cv_bridge::toCvShare(img, "bgr8")->image;
 
-    detectTrack(cv_img, color_edge_img);
+    distinguishTrack(cv_img, color_edge_img);
 
     cv::imshow(WINDOW_NAME, color_edge_img);
-    cv::waitKey(30);
   } catch (cv_bridge::Exception& e) {
     ROS_ERROR("Could not convert from '%s' to 'bgr8'.", img->encoding.c_str());
   }

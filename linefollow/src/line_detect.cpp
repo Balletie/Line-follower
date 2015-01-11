@@ -11,11 +11,12 @@
 #define THRESHOLD 127
 #define MAXVAL    255
 
-void detectTrack(cv::InputArray image, cv::Mat& track_img) {
+void distinguishTrack(cv::InputArray image, cv::Mat& track_img) {
   cv::Mat grayscale;
   cv::cvtColor(image, grayscale, CV_BGR2GRAY);
+
   // TODO: Use a more sophisticated way of distinguishing the track.
-  cv::threshold(grayscale, track_img, -1, MAXVAL, cv::THRESH_BINARY_INV +
+  cv::threshold(grayscale, track_img, -1, MAXVAL, cv::THRESH_BINARY_INV |
                                                   cv::THRESH_OTSU);
 }
 
