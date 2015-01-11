@@ -17,10 +17,11 @@
 
 void imageCallback(const sensor_msgs::ImageConstPtr& img) {
   try {
-    cv::Mat cv_img, color_edge_img;
+    cv::Mat cv_img, track_img;
     cv_img = cv_bridge::toCvShare(img, "bgr8")->image;
 
-    distinguishTrack(cv_img, color_edge_img);
+    distinguishTrack(cv_img, track_img);
+    int center = track_img.size().height / 2;
 
     cv::imshow(WINDOW_NAME, color_edge_img);
   } catch (cv_bridge::Exception& e) {
