@@ -6,8 +6,10 @@ project(linefollow)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
-  geometry_msgs
   roscpp
+  image_transport
+  geometry_msgs
+  sensor_msgs
   std_msgs
 )
 
