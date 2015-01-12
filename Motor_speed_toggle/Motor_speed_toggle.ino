@@ -14,6 +14,9 @@
 #define EN2  25
 #define FWD2 2
 
+#define TRIG 23
+#define ECHO 22
+
 #define MAX_VEL 255
 
 ros::NodeHandle_<Bluetooth> nh;
@@ -34,8 +37,8 @@ void twistCb(const geometry_msgs::Twist& twist_msg){
   int left_speed = 0, right_speed = 0;
   left_speed = lin_vel * MAX_VEL;
   right_speed = lin_vel * MAX_VEL;
-  left_speed += ang_vel * MAX_VEL;
-  right_speed += -ang_vel * MAX_VEL;
+  left_speed += -ang_vel * MAX_VEL;
+  right_speed += ang_vel * MAX_VEL;
 
   if (left_speed < 0) {
     digitalWrite(FWD1, LOW);
@@ -66,6 +69,10 @@ void setup()
   pinMode(REV2, OUTPUT);
   pinMode(FWD1, OUTPUT);
   pinMode(FWD2, OUTPUT);
+
+  pinMode(TRIG, OUTPUT);
+  pinMode(ECHO, INPUT);
+
   digitalWrite(EN1, HIGH);
   digitalWrite(EN2, HIGH);
   digitalWrite(REV1, LOW);
@@ -76,9 +83,27 @@ void setup()
   nh.subscribe(twist);
 }
 
+long getRange() {
+  digitalWrite(TRIG, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+  long duration = pulseIn(ECHO, HIGH);
+  return (duration / 2) / 29.1;
+}
+
 void loop()
 {  
   nh.spinOnce();
+
+  if (getRange() < 10) {
+    digitalWrite(FWD1, LOW);
+    digitalWrite(FWD2, LOW);
+    digitalWrite(13, HIGH);
+  } else {
+    digitalWrite(13, LOW);
+  }
   delay(1);
 }
 
