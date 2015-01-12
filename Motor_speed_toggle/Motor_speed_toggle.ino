@@ -46,7 +46,9 @@ void setup() {
 
   pinMode(TRIG, OUTPUT);
   pinMode(ECHO, INPUT);
+  pinMode(13, OUTPUT);
 
+  digitalWrite(13, HIGH);
   digitalWrite(EN1, HIGH);
   digitalWrite(EN2, HIGH);
   digitalWrite(REV1, LOW);
@@ -73,8 +75,11 @@ void loop() {
   unsigned long new_time = millis();
   if (new_time - time >= 40) {
     if (obstacle = (getRange() < 10)) {
-      if (!tank.enabled) tank.toggle();
+      if (tank.enabled){
+         tank.toggle();
+      }
     }
+    time = new_time;
   }
   if (!(obstacle || tank.enabled)) tank.toggle();
   delay(1);

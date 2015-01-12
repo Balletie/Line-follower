@@ -26,6 +26,7 @@ void RobotTank::setSpeed(float linear, float angular) {
 
 void RobotTank::toggle() {
   enabled = !enabled;
+  digitalWrite(13, enabled*HIGH);
   left.setEnabled(enabled);
   right.setEnabled(enabled);
 }
