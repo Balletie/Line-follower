@@ -11,7 +11,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
-#include "linefollow/line_detect.h"
+#include <linefollow/line_detect.h>
 
 #define WINDOW_NAME "Hello_World"
 #define SLIDER_NAME "Constants slider"
@@ -32,7 +32,7 @@ public:
 
       detectLines(cv_img, color_edge_img);
 
-     // distinguishTrack(cv_img, color_edge_img);
+      //distinguishTrack(cv_img, color_edge_img);
       //detectLines(cv_img, color_edge_img);
       //detectRectangles(cv_img, color_edge_img);
       
