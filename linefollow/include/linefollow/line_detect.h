@@ -18,5 +18,6 @@ extern int houghMaxLineGap;
 
 void distinguishTrack(cv::InputArray, cv::Mat&);
 void detectLines(cv::InputArray, cv::Mat&);
+void detectRectangles(cv::InputArray, cv::Mat&);
 
 #endif /*_LINE_DETECT_H_*/

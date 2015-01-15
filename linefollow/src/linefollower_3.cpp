@@ -14,7 +14,7 @@
 #include "linefollow/line_detect.h"
 
 #define WINDOW_NAME "Hello_World"
-//#define SLIDER_NAME "Constants slider"
+#define SLIDER_NAME "Constants slider"
 
 class RosLineFollower{
 public:
@@ -32,6 +32,10 @@ public:
 
       detectLines(cv_img, color_edge_img);
 
+     // distinguishTrack(cv_img, color_edge_img);
+      //detectLines(cv_img, color_edge_img);
+      //detectRectangles(cv_img, color_edge_img);
+      
       cv::imshow(WINDOW_NAME, color_edge_img);
       geometry_msgs::Twist msg;
       msg.linear.x = 10;
@@ -48,30 +52,16 @@ private:
   image_transport::Subscriber img_sub;
 };
 
-
-void imageCallback(const sensor_msgs::ImageConstPtr& img) {
-  try {
-    cv::Mat cv_img, color_edge_img;
-    cv_img = cv_bridge::toCvShare(img, "bgr8")->image;
-
-    detectLines(cv_img, color_edge_img);
-
-    cv::imshow(WINDOW_NAME, color_edge_img);
-  } catch (cv_bridge::Exception& e) {
-    ROS_ERROR("Could not convert from '%s' to 'bgr8'.", img->encoding.c_str());
-  }
-}
-
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "image_test");
+  ros::init(argc, argv, "line_follower");
   RosLineFollower linefolloer;
 
   cv::namedWindow(WINDOW_NAME);
-  //cv::namedWindow(SLIDER_NAME);
-  //cv::createTrackbar("Canny low threshold:", SLIDER_NAME, &lowThreshold, 100);
-  //cv::createTrackbar("Hough threshold:", SLIDER_NAME, &houghThreshold, 200);
-  //cv::createTrackbar("Hough min. line:", SLIDER_NAME, &houghMinLineLength, 100);
-  //cv::createTrackbar("Hough max. gap:", SLIDER_NAME, &houghMaxLineGap, 100);
+  cv::namedWindow(SLIDER_NAME);
+  cv::createTrackbar("Canny low threshold:", SLIDER_NAME, &lowThreshold, 100);
+  cv::createTrackbar("Hough threshold:", SLIDER_NAME, &houghThreshold, 200);
+  cv::createTrackbar("Hough min. line:", SLIDER_NAME, &houghMinLineLength, 100);
+  cv::createTrackbar("Hough max. gap:", SLIDER_NAME, &houghMaxLineGap, 100);
   cv::startWindowThread();
   ros::spin();
   cv::destroyWindow(WINDOW_NAME);
