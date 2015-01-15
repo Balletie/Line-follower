@@ -35,7 +35,7 @@ public:
       //distinguishTrack(cv_img, color_edge_img);
       //detectLines(cv_img, color_edge_img);
       //detectRectangles(cv_img, color_edge_img);
-      
+
       cv::imshow(WINDOW_NAME, color_edge_img);
       geometry_msgs::Twist msg;
       msg.linear.x = 10;
@@ -54,7 +54,7 @@ private:
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "line_follower");
-  RosLineFollower linefolloer;
+  RosLineFollower linefollower;
 
   cv::namedWindow(WINDOW_NAME);
   cv::namedWindow(SLIDER_NAME);
@@ -63,6 +63,18 @@ int main(int argc, char** argv) {
   cv::createTrackbar("Hough min. line:", SLIDER_NAME, &houghMinLineLength, 100);
   cv::createTrackbar("Hough max. gap:", SLIDER_NAME, &houghMaxLineGap, 100);
   cv::startWindowThread();
+
+#if 1
+  cv::Mat img;
+  cv_bridge::CvImage stupid;
+  printf(IMG_PATH);
+  img = cv::imread(IMG_PATH);
+  stupid.encoding = "bgr8";
+  stupid.image = img;
+
+  while(true) linefollower.imageCallback(stupid.toImageMsg());
+#endif
+
   ros::spin();
   cv::destroyWindow(WINDOW_NAME);
 }

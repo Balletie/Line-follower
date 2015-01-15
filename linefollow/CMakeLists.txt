@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(linefollow)
 
+add_definitions(-DIMG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/sample_img_0.jpeg")
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
