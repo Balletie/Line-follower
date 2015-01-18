@@ -28,10 +28,11 @@ public:
 
   void imageCallback(const sensor_msgs::ImageConstPtr& img) {
     try {
-      cv::Mat cv_img, color_edge_img;
+      cv::Mat cv_img, track_img, color_edge_img;
       cv_img = cv_bridge::toCvShare(img, "bgr8")->image;
 
-      detectLines(cv_img, color_edge_img);
+      distinguishTrack(cv_img, track_img);
+      detectLines(track_img, color_edge_img);
 
       //distinguishTrack(cv_img, color_edge_img);
       //detectLines(cv_img, color_edge_img);
