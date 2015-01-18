@@ -69,7 +69,6 @@ void detectLines(cv::InputArray image, cv::Mat& color_edge_img) {
       double y2 = lines[i][3]; 
 
       double d = distance(x,x2,y,y2);
-      ROS_INFO("Distance: %f", d);
       if(i == 0){
         current_distance = d;
         cl = lines[i];
@@ -101,7 +100,7 @@ void detectLines(cv::InputArray image, cv::Mat& color_edge_img) {
        // Draw a colored line
       cv::line(color_edge_img, cv::Point(cl[0], cl[1]),
                                cv::Point(cl[2], cl[3]),
-                               cv::Scalar(255,0,0), 3, 8);  
+                               cv::Scalar(0,0,255), 3, 8);  
       cv::circle(color_edge_img, cv::Point(x,y), 100, cv::Scalar(255,0,0), 3, 8);
   }
 }

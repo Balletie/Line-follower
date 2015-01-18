@@ -66,18 +66,23 @@ int main(int argc, char** argv) {
   cv::createTrackbar("Hough max. gap:", SLIDER_NAME, &houghMaxLineGap, 100);
   cv::startWindowThread();
 
-  if (TEST_FLAG){
-    ROS_INFO("Test");
-    cv::Mat img;
-    cv_bridge::CvImage msg;
-    //img = cv::imread("/home/michela/catkin_ws/src/Line-follower/linefollow/src/test1.jpg");
-    img = cv::imread(IMG_PATH);
-    msg.encoding = "bgr8";
-    msg.image = img;
+  #if TEST_FLAG
+  ROS_INFO("Test");
+  cv::Mat img;
+  cv_bridge::CvImage msg;
+  img = cv::imread(IMG_PATH);
+  msg.encoding = "bgr8";
+  msg.image = img;
 
-    while(true) linefollower.imageCallback(msg.toImageMsg());
+  while(true) {
+    linefollower.imageCallback(msg.toImageMsg());
+    if (cv::waitKey(40) == 27) {
+      cv::destroyAllWindows();
+      exit(0);
+    }
   }
-
+  #else
   ros::spin();
-  cv::destroyWindow(WINDOW_NAME);
+  cv::destroyAllWindows();
+  #endif
 }
