@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
     ROS_INFO("Test");
     cv::Mat img;
     cv_bridge::CvImage msg;
-    //"/home/michela/catkin_ws/src/Line-follower/linefollow/src/test1.jpg"
+    //img = cv::imread("/home/michela/catkin_ws/src/Line-follower/linefollow/src/test1.jpg");
     img = cv::imread(IMG_PATH);
     msg.encoding = "bgr8";
     msg.image = img;
