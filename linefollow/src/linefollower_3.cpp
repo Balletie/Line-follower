@@ -13,6 +13,7 @@
 #include <geometry_msgs/Twist.h>
 #include <linefollow/line_detect.h>
 
+#define TEST_FLAG 1
 #define WINDOW_NAME "Hello_World"
 #define SLIDER_NAME "Constants slider"
 
@@ -54,6 +55,7 @@ private:
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "line_follower");
+  
   RosLineFollower linefollower;
 
   cv::namedWindow(WINDOW_NAME);
@@ -64,16 +66,17 @@ int main(int argc, char** argv) {
   cv::createTrackbar("Hough max. gap:", SLIDER_NAME, &houghMaxLineGap, 100);
   cv::startWindowThread();
 
-#if 1
-  cv::Mat img;
-  cv_bridge::CvImage stupid;
-  printf(IMG_PATH);
-  img = cv::imread(IMG_PATH);
-  stupid.encoding = "bgr8";
-  stupid.image = img;
+  if (TEST_FLAG){
+    ROS_INFO("Test");
+    cv::Mat img;
+    cv_bridge::CvImage msg;
+    //"/home/michela/catkin_ws/src/Line-follower/linefollow/src/test1.jpg"
+    img = cv::imread(IMG_PATH);
+    msg.encoding = "bgr8";
+    msg.image = img;
 
-  while(true) linefollower.imageCallback(stupid.toImageMsg());
-#endif
+    while(true) linefollower.imageCallback(msg.toImageMsg());
+  }
 
   ros::spin();
   cv::destroyWindow(WINDOW_NAME);

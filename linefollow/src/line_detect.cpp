@@ -8,13 +8,14 @@
 
 #include <linefollow/line_detect.h>
 #include <vector>
+#include <ros/ros.h>
 #define RATIO     3
 #define MAXVAL    255
 
-int lowThreshold = 50;
-int houghThreshold = 80;
-int houghMinLineLength = 30;
-int houghMaxLineGap = 10;
+int lowThreshold = 60;
+int houghThreshold = 10;
+int houghMinLineLength = 10;
+int houghMaxLineGap = 14;
 
 void distinguishTrack(cv::InputArray image, cv::Mat& track_img) {
   cv::Mat grayscale;
@@ -34,11 +35,47 @@ void detectLines(cv::InputArray image, cv::Mat& color_edge_img) {
   cv::HoughLinesP(edge_img, lines, 1, CV_PI/180, houghThreshold,
                                                  houghMinLineLength,
                                                  houghMaxLineGap);
-  for(size_t i = 0; i < lines.size(); i++) {
-    // Draw a colored line
-    cv::line(color_edge_img, cv::Point(lines[i][0], lines[i][1]),
-                             cv::Point(lines[i][2], lines[i][3]),
-                             cv::Scalar(0,0,255), 3, 8);
+  int size = lines.size();
+  if(size == 0){
+    ROS_INFO("No Lines Detected.");
+  } else {
+
+    // Image Width
+    int x_size = color_edge_img.cols;
+
+    //Image Height
+    int y_size = color_edge_img.rows;
+
+    // Draw center of robovision
+    cv::line(color_edge_img, cv::Point(0, 0),
+                             cv::Point(x_size, y_size),
+                             cv::Scalar(255,0,0), 3, 8);
+
+    // Top-half lines
+    int th = 0;
+    std::vector<cv::Vec4i> tl(size);
+    
+    // Closest line
+    cv::Vec4i cl;
+
+    for(size_t i = 0; i < size; i++) {
+      int x1 = lines[i][0];
+      int y1 = lines[i][1];
+      int x2 = lines[i][2];
+      int y2 = lines[i][3]; 
+
+      // Draw a colored line
+      cv::line(color_edge_img, cv::Point(x1, y1),
+                               cv::Point(x2, y2),
+                               cv::Scalar(0,0,255), 3, 8);      
+    }
+
+
+    // The closest line is cl:
+    if(cl[0] == 0){
+      ROS_INFO("No closest line");
+    }
+
   }
 }
 
