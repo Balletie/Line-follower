@@ -13,7 +13,7 @@
 #include <geometry_msgs/Twist.h>
 #include <linefollow/line_detect.h>
 
-#define TEST_FLAG 1
+#define TEST_FLAG 0
 #define WINDOW_NAME "Hello_World"
 #define SLIDER_NAME "Constants slider"
 

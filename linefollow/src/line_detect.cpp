@@ -68,8 +68,6 @@ geometry_msgs::Twist detectLine(cv::InputArray image, cv::Mat& color_edge_img) {
     if(d < current_distance && a < 90){
       cl = lines[i];
       current_distance = d;
-      ROS_INFO("Current Angle: %f", a);
-      ROS_INFO("Current Distance: %f", current_distance);
     }
     // Draw a colored line
     /*cv::line(color_edge_img, cv::Point(x1, y1),
@@ -79,8 +77,8 @@ geometry_msgs::Twist detectLine(cv::InputArray image, cv::Mat& color_edge_img) {
   }
 
   // The closest line is cl:
-  int linear = 10;
-  int angular = 0;
+  double linear = 0.5;
+  double angular = 0;
   if(cl[0] == 0) {
     ROS_INFO("No closest line");
     linear = 0;
@@ -97,14 +95,7 @@ geometry_msgs::Twist detectLine(cv::InputArray image, cv::Mat& color_edge_img) {
         y2 = y;
       } 
 
-      double a = angle(x1, x2, y1, y2);
-      angular = a * ((y2 - y1)/(y2 - y1));
-
-      if(angular > 0){
-        ROS_INFO("RIGHT");
-      } else {
-        ROS_INFO("LEFT");
-      }
+      angular = angle(x1, x2, y1, y2);
        // Draw a colored line
       cv::line(color_edge_img, cv::Point(cl[0], cl[1]),
                                cv::Point(cl[2], cl[3]),
@@ -115,14 +106,17 @@ geometry_msgs::Twist detectLine(cv::InputArray image, cv::Mat& color_edge_img) {
 
   geometry_msgs::Twist msg;
   msg.linear.x = linear;
-  msg.angular.z = angular;
+  msg.angular.z = angular / 90;
   return msg;
 }
 
 double angle(double x0, double x1, double y0, double y1){
   double y_diff = abs(y1-y0);
   double x_diff = abs(x1-x0);
-  return (atan(y_diff/x_diff)) * (180 / CV_PI);
+  int sign = 1;
+  if (y1 - y0 > 0) sign = -1;
+  //return sign;
+  return (sign * (atan(y_diff/x_diff)) * (180 / CV_PI));
 }
 
 double distance(double x0, double x1, double y0, double y1){
@@ -146,7 +140,6 @@ void detectRectangles(cv::InputArray image, cv::Mat& track_img){
     minRect[i].points(rect_points);
     for(int j=0; j < 4; j++){
       cv::line(track_img, rect_points[j], rect_points[(j+1)%4], cv::Scalar(255,0,0), 3, 8);
-
     }
   }
 }

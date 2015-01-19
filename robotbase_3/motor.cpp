@@ -1,6 +1,8 @@
 #include "motor.h"
 #include "Arduino.h"
 
+#define LED 13
+
 void Motor::setSpeed(float speed) {
   m_speed = speed * MAX_VEL;
   if (m_speed < 0) {
@@ -26,7 +28,7 @@ void RobotTank::setSpeed(float linear, float angular) {
 
 void RobotTank::toggle() {
   enabled = !enabled;
-  digitalWrite(13, enabled*HIGH);
+  //digitalWrite(LED, enabled*HIGH);
   left.setEnabled(enabled);
   right.setEnabled(enabled);
 }

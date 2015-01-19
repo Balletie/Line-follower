@@ -9,32 +9,29 @@
 
 #define TRIG 23
 #define ECHO 22
+#define LED 13
+#define FAIL_SAFE_T 2000
 
 ros::NodeHandle_<Bluetooth> nh;
 bool obstacle = false;
-unsigned long time;
+bool timedout = false;
+unsigned long ob_time;
+unsigned long sg_time;
 RobotTank tank;
 
-void motorCb( const std_msgs::Empty& toggle_msg) {
-  digitalWrite(FWD1, HIGH-digitalRead(FWD1));
-  digitalWrite(FWD2, HIGH-digitalRead(FWD2));
-}
-
-void speedCb(const std_msgs::UInt8& speed_msg) {
-  analogWrite(FWD1, (int)speed_msg.data);
-  analogWrite(FWD2, (int)speed_msg.data);
-}
-
 void twistCb(const geometry_msgs::Twist& twist_msg) {
+  if (timedout && !obstacle) {
+    tank.toggle();
+    timedout = false;
+  }
+  sg_time = millis();
+
   float lin_vel = twist_msg.linear.x;
   float ang_vel = twist_msg.angular.z;
   tank.setSpeed(lin_vel, ang_vel);
 }
 
 ros::Subscriber<geometry_msgs::Twist> twist("cmd_vel", &twistCb);
-
-ros::Subscriber<std_msgs::Empty> sub("toggle_motor", &motorCb);
-ros::Subscriber<std_msgs::UInt8> spd("speed_control", &speedCb);
 
 void setup() {
   pinMode(EN1, OUTPUT);
@@ -46,17 +43,15 @@ void setup() {
 
   pinMode(TRIG, OUTPUT);
   pinMode(ECHO, INPUT);
-  pinMode(13, OUTPUT);
+  pinMode(LED, OUTPUT);
 
-  digitalWrite(13, HIGH);
+  digitalWrite(LED, LOW);
   digitalWrite(EN1, HIGH);
   digitalWrite(EN2, HIGH);
   digitalWrite(REV1, LOW);
   digitalWrite(REV2, LOW);
 
   nh.initNode();
-  nh.subscribe(sub);
-  nh.subscribe(spd);
   nh.subscribe(twist);
 }
 
@@ -73,14 +68,20 @@ long getRange() {
 void loop() {
   nh.spinOnce();
   unsigned long new_time = millis();
-  if (new_time - time >= 40) {
+  if (new_time - ob_time >= 40) {
     if (obstacle = (getRange() < 10)) {
       if (tank.enabled){
          tank.toggle();
       }
     }
-    time = new_time;
+    ob_time = new_time;
   }
-  if (!(obstacle || tank.enabled)) tank.toggle();
+  if (!timedout && new_time - sg_time >= FAIL_SAFE_T) {
+    if (tank.enabled) {
+      tank.toggle();
+    }
+    timedout = true;
+  }
+  if (!(obstacle || timedout || tank.enabled)) tank.toggle();
   delay(1);
 }
