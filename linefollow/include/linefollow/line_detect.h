@@ -10,6 +10,7 @@
 #define _LINE_DETECT_H_
 
 #include <opencv2/opencv.hpp>
+#include <geometry_msgs/Twist.h>
 
 extern int lowThreshold;
 extern int houghThreshold;
@@ -17,8 +18,9 @@ extern int houghMinLineLength;
 extern int houghMaxLineGap;
 
 void distinguishTrack(cv::InputArray, cv::Mat&);
-void detectLines(cv::InputArray, cv::Mat&);
+geometry_msgs::Twist detectLine(cv::InputArray, cv::Mat&);
 void detectRectangles(cv::InputArray, cv::Mat&);
+double angle(double, double, double, double);
 double distance(double, double, double, double);
 
 #endif /*_LINE_DETECT_H_*/

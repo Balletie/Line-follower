@@ -9,6 +9,7 @@
 #include <linefollow/line_detect.h>
 #include <vector>
 #include <cmath>
+#include <geometry_msgs/Twist.h>
 #include <ros/ros.h>
 #define RATIO     3
 #define MAXVAL    255
@@ -22,14 +23,16 @@ void distinguishTrack(cv::InputArray image, cv::Mat& track_img) {
   cv::Mat grayscale;
   cv::cvtColor(image, grayscale, CV_BGR2GRAY);
 
-  // TODO: Use a more sophisticated way of distinguishing the track.
   cv::threshold(grayscale, track_img, -1, MAXVAL, cv::THRESH_BINARY_INV |
                                                   cv::THRESH_OTSU);
 }
 
-void detectLines(cv::InputArray image, cv::Mat& color_edge_img) {
+geometry_msgs::Twist detectLine(cv::InputArray image, cv::Mat& color_edge_img) {
+  
+
   cv::Mat edge_img;
-  cv::Canny(image, edge_img, lowThreshold, lowThreshold * RATIO, 3);
+  distinguishTrack(image, edge_img);
+  cv::Canny(edge_img, edge_img, lowThreshold, lowThreshold * RATIO, 3);
   cv::cvtColor(edge_img, color_edge_img, CV_GRAY2BGR);
 
   std::vector<cv::Vec4i> lines;
@@ -37,72 +40,89 @@ void detectLines(cv::InputArray image, cv::Mat& color_edge_img) {
                                                  houghMinLineLength,
                                                  houghMaxLineGap);
   int size = lines.size();
-  int LINE_DETECTED = 0;
+  
   // Image Width
   double x_size = color_edge_img.cols;
   //Image Height
   double y_size = color_edge_img.rows;
+  
+  // Robot Origin
   double x = x_size;
   double y = y_size / 2;
 
   // Closest line
   cv::Vec4i cl;
+
   if(size == 0){
     ROS_INFO("No Lines Detected.");
   } else {
+  double current_distance = x_size * x_size;
+  for(size_t i = 0; i < size; i++) {
+    double x1 = lines[i][0];
+    double y1 = lines[i][1];
+    double x2 = lines[i][2];
+    double y2 = lines[i][3]; 
 
-
-    // Draw center of robovision
-    /*cv::line(color_edge_img, cv::Point(0, 0),
-                             cv::Point(x_size, y_size),
-                             cv::Scalar(255,0,0), 3, 8); */
-
-    // Top-half lines
-    //int thl_index = 0;
-    //std::vector<cv::Vec4i> thl_array(size);
-
-    double current_distance = -1;
-    for(size_t i = 0; i < size; i++) {
-      double x1 = lines[i][0];
-      double y1 = lines[i][1];
-      double x2 = lines[i][2];
-      double y2 = lines[i][3]; 
-
-      double d = distance(x,x2,y,y2);
-      if(i == 0){
-        current_distance = d;
-        cl = lines[i];
-      } else if(current_distance > d){
-        cl = lines[i];
-        current_distance = d;
-        ROS_INFO("Current Distance: %f", current_distance);
-      }
-
-      /*if(y2 > (y_size/2)){
-        thl_array[thl_index] = lines[i];
-        thl_index++;
-        ROS_INFO("%d out of %d", thl_index, size);
-      }*/
-
-
-
-      // Draw a colored line
-      /*cv::line(color_edge_img, cv::Point(x1, y1),
+    double d = distance(x,x2,y,y2);
+    double a = angle(x1, x2, y1, y2);
+    if(d < current_distance && a < 90){
+      cl = lines[i];
+      current_distance = d;
+      ROS_INFO("Current Angle: %f", a);
+      ROS_INFO("Current Distance: %f", current_distance);
+    }
+    // Draw a colored line
+    /*cv::line(color_edge_img, cv::Point(x1, y1),
                                cv::Point(x2, y2),
                                cv::Scalar(0,0,255), 3, 8); */     
     }
   }
 
   // The closest line is cl:
+  int linear = 10;
+  int angular = 0;
   if(cl[0] == 0) {
     ROS_INFO("No closest line");
+    linear = 0;
   } else {
+      double x1 = cl[0];
+      double y1 = cl[1];
+      double x2 = cl[2];
+      double y2 = cl[3];
+
+      if(distance(x, x2, y, y2) > 100){
+        x1 = x2;
+        y1 = y2;
+        x2 = x;
+        y2 = y;
+      } 
+
+      double a = angle(x1, x2, y1, y2);
+      angular = a * ((y2 - y1)/(y2 - y1));
+
+      if(angular > 0){
+        ROS_INFO("RIGHT");
+      } else {
+        ROS_INFO("LEFT");
+      }
        // Draw a colored line
       cv::line(color_edge_img, cv::Point(cl[0], cl[1]),
                                cv::Point(cl[2], cl[3]),
                                cv::Scalar(0,0,255), 3, 8);
-      cv::circle(color_edge_img, cv::Point(x,y), 100, cv::Scalar(0,255,0), 3, 8);
+      //cv::circle(color_edge_img, cv::Point(x,y), 100, cv::Scalar(0,255,0), 3, 8);
+
   }
+
+  geometry_msgs::Twist msg;
+  msg.linear.x = linear;
+  msg.angular.z = angular;
+  return msg;
+}
+
+double angle(double x0, double x1, double y0, double y1){
+  double y_diff = abs(y1-y0);
+  double x_diff = abs(x1-x0);
+  return (atan(y_diff/x_diff)) * (180 / CV_PI);
 }
 
 double distance(double x0, double x1, double y0, double y1){

@@ -31,17 +31,15 @@ public:
       cv::Mat cv_img, track_img, color_edge_img;
       cv_img = cv_bridge::toCvShare(img, "bgr8")->image;
 
-      distinguishTrack(cv_img, track_img);
-      detectLines(track_img, color_edge_img);
+      //Distinguish is now called inside of detected (distinguishTrack(cv_img, track_img);)
+      geometry_msgs::Twist msg = detectLine(cv_img, color_edge_img);
 
       //distinguishTrack(cv_img, color_edge_img);
-      //detectLines(cv_img, color_edge_img);
+      //detectLine(cv_img, color_edge_img);
       //detectRectangles(cv_img, color_edge_img);
 
       cv::imshow(WINDOW_NAME, color_edge_img);
-      geometry_msgs::Twist msg;
-      msg.linear.x = 10;
-      msg.angular.z = 5;
+      
       vel_pub.publish(msg);
     } catch (cv_bridge::Exception& e) {
       ROS_ERROR("Could not convert from '%s' to 'bgr8'.", img->encoding.c_str());
