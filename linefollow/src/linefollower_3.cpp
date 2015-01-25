@@ -29,8 +29,8 @@ public:
   }
 
   /**
-	The image callback is performed when an image is received
-  */
+   * The image callback is performed when an image is received
+   */
   void imageCallback(const sensor_msgs::ImageConstPtr& img) {
     try {
       cv::Mat cv_img, track_img, color_edge_img;
