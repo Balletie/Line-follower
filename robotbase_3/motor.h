@@ -1,6 +1,15 @@
+/**
+ * Group number: 3
+ * Student 1:
+ * Skip Lentz, 4334051
+ * Student 2:
+ * Thomas Baars, 4212134
+ */
+
 #ifndef _MOTOR_H_
 #define _MOTOR_H_
 
+// Define the pins of the motors
 #define REV1 7
 #define EN1  24
 #define FWD1 6
@@ -9,6 +18,7 @@
 #define EN2  25
 #define FWD2 2
 
+// The maximum speed
 #define MAX_VEL 255
 
 class Motor {

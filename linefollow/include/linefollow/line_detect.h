@@ -12,6 +12,7 @@
 #include <opencv2/opencv.hpp>
 #include <geometry_msgs/Twist.h>
 
+// The values of the line detection parameters are made available to the slider window
 extern int lowThreshold;
 extern int houghThreshold;
 extern int houghMinLineLength;
@@ -19,7 +20,6 @@ extern int houghMaxLineGap;
 
 void distinguishTrack(cv::InputArray, cv::Mat&);
 geometry_msgs::Twist detectLine(cv::InputArray, cv::Mat&);
-void detectRectangles(cv::InputArray, cv::Mat&);
 double angle(double, double, double, double);
 double distance(double, double, double, double);
 
