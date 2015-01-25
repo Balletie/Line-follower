@@ -67,9 +67,9 @@ geometry_msgs::Twist detectLine(cv::InputArray image, cv::Mat& color_edge_img) {
       double d = distance(x,x2,y,y2);
       double a = angle(x1, x2, y1, y2);
       // If the distance to the robot origin is less and the angle is acute
-	    if(d < current_distance && a < 90){
+      if(d < current_distance && a < 90){
         // update the closest line
-	      cl = lines[i];
+        cl = lines[i];
         current_distance = d;
       }
     }
@@ -87,10 +87,10 @@ geometry_msgs::Twist detectLine(cv::InputArray image, cv::Mat& color_edge_img) {
     double x2 = cl[2];
     double y2 = cl[3];
 
-	  // If the closest line is outside a 100 unit radius
+    // If the closest line is outside a 100 unit radius
     if(distance(x, x2, y, y2) > 100){
       // Go to the start of the line segment from the robot origin
-		  x1 = x2;
+      x1 = x2;
       y1 = y2;
       x2 = x;
       y2 = y;
