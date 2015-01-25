@@ -5,7 +5,7 @@
  * Student 2:
  * Thomas Baars, 4212134
  */
- 
+
 #include "motor.h"
 #include "bluetooth.h"
 #include <ros.h>
@@ -69,13 +69,13 @@ void setup() {
 }
 
 long getRange() {
-  // Send an ultrasonic pulse 
+  // Send an ultrasonic pulse
   digitalWrite(TRIG, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIG, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG, LOW);
-  
+
   // Get the response time of the echo
   long duration = pulseIn(ECHO, HIGH);
 
@@ -98,7 +98,7 @@ void loop() {
     // Update the time
     ob_time = new_time;
   }
-  
+
   // If no message has been received in FAIL_SAFE_T milliseconds then stop the tank
   if (!timedout && new_time - sg_time >= FAIL_SAFE_T) {
     if (tank.enabled) {
@@ -106,9 +106,9 @@ void loop() {
     }
     timedout = true;
   }
-  
+
   // Enable the tank if there is no obstacle and it has received a message and the tank was disabled 
   if (!(obstacle || timedout || tank.enabled)) tank.toggle();
-  
+
   delay(1);
 }

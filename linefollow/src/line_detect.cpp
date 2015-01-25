@@ -14,7 +14,7 @@
 #define RATIO     3
 #define MAXVAL    255
 
-//Default values for line detection parameters
+// Default values for line detection parameters
 int lowThreshold = 60;
 int houghThreshold = 10;
 int houghMinLineLength = 10;
@@ -58,20 +58,20 @@ geometry_msgs::Twist detectLine(cv::InputArray image, cv::Mat& color_edge_img) {
     ROS_INFO("No Lines Detected.");
   } else {
     double current_distance = x_size * x_size;
-  for(size_t i = 0; i < size; i++) {
-    double x1 = lines[i][0];
-    double y1 = lines[i][1];
-    double x2 = lines[i][2];
-    double y2 = lines[i][3]; 
+    for(size_t i = 0; i < size; i++) {
+      double x1 = lines[i][0];
+      double y1 = lines[i][1];
+      double x2 = lines[i][2];
+      double y2 = lines[i][3];
 
-    double d = distance(x,x2,y,y2);
-    double a = angle(x1, x2, y1, y2);
-    // If the distance to the robot origin is less and the angle is acute
-	if(d < current_distance && a < 90){
-      // update the closest line
-	  cl = lines[i];
-      current_distance = d;
-    }
+      double d = distance(x,x2,y,y2);
+      double a = angle(x1, x2, y1, y2);
+      // If the distance to the robot origin is less and the angle is acute
+	    if(d < current_distance && a < 90){
+        // update the closest line
+	      cl = lines[i];
+        current_distance = d;
+      }
     }
   }
 
@@ -82,25 +82,25 @@ geometry_msgs::Twist detectLine(cv::InputArray image, cv::Mat& color_edge_img) {
     ROS_INFO("No closest line");
     linear = 0;
   } else {
-      double x1 = cl[0];
-      double y1 = cl[1];
-      double x2 = cl[2];
-      double y2 = cl[3];
+    double x1 = cl[0];
+    double y1 = cl[1];
+    double x2 = cl[2];
+    double y2 = cl[3];
 
 	  // If the closest line is outside a 100 unit radius
-      if(distance(x, x2, y, y2) > 100){
-        // Go to the start of the line segment from the robot origin
-		x1 = x2;
-        y1 = y2;
-        x2 = x;
-        y2 = y;
-      } 
+    if(distance(x, x2, y, y2) > 100){
+      // Go to the start of the line segment from the robot origin
+		  x1 = x2;
+      y1 = y2;
+      x2 = x;
+      y2 = y;
+    }
 
-      angular = angle(x1, x2, y1, y2);
-       // Draw the chosen line
-      cv::line(color_edge_img, cv::Point(cl[0], cl[1]),
-                               cv::Point(cl[2], cl[3]),
-                               cv::Scalar(0,0,255), 3, 8);
+    angular = angle(x1, x2, y1, y2);
+    // Draw the chosen line
+    cv::line(color_edge_img, cv::Point(cl[0], cl[1]),
+                             cv::Point(cl[2], cl[3]),
+                             cv::Scalar(0,0,255), 3, 8);
   }
 
   geometry_msgs::Twist msg;
